@@ -1,4 +1,4 @@
-package com.example.emailtester;
+package com.insider.kontrollkunde;
 
 import java.util.Date; 
 import java.util.Properties; 
@@ -167,6 +167,21 @@ public class Mail extends javax.mail.Authenticator {
       // TODO Auto-generated method stub
       this._subject=string;
   }  
-
+  
+  public String getUser(){
+	  return _user;
+  }
+  
+  public void setUser(String user){
+	  this._user = user;
+  }
+  
+  public String getPass(){
+	  return _pass;
+  }
+  
+  public void setPass(String pass){
+	  this._pass = pass;
+  }
   // more of the getters and setters ….. 
 }

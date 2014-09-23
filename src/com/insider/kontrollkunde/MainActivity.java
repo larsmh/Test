@@ -7,6 +7,7 @@ import com.insider.kontrollkunde.Model.CustomerList;
 import com.insider.kontrollkunde.Model.Globals;
 
 import android.support.v7.app.ActionBarActivity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -14,11 +15,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 
 
 public class MainActivity extends ActionBarActivity {
 	private AutoCompleteTextView custSelect;
-    @Override
+	public Customer cust;
+	public String date;
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -27,12 +31,35 @@ public class MainActivity extends ActionBarActivity {
         custSelect = (AutoCompleteTextView) findViewById(R.id.custselect);
         ArrayAdapter<Customer> adapter = new ArrayAdapter<Customer>(this, android.R.layout.simple_list_item_1, Globals.custList.getList());
         custSelect.setAdapter(adapter);
+        
+        
+        Button sendEmail = (Button) findViewById(R.id.regbutton);
+        
+        sendEmail.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Mail mail = new Mail("franangthomas@gmail.com", "tranduil123");
+				String[] toArr = {"franang@stud.ntnu.com"}; 
+	            mail.setTo(toArr); 
+	            mail.setFrom("franangthomas@gmail.com"); 
+	            mail.setSubject("Halla balla."); 
+	            mail.setBody("Savner deg!!");
+	            
+	            new SendEmailTask(mail).execute();
+			}
+		});
     }
     public void register(View view){
     	Customer cust = getCustomer(custSelect.getText().toString());
+    	//Setting customer to global var.
+    	this.cust = cust;
     	Calendar c = Calendar.getInstance();
     	String date=c.get(Calendar.DATE)+"."+c.get(Calendar.MONTH)+"."+c.get(Calendar.YEAR)+" "
     			+c.get(Calendar.HOUR_OF_DAY)+":"+c.get(Calendar.MINUTE);
+    	this.date = date;
+    	
     	//sendMail(cust, date);
     	//registrer jobb i database
     }
@@ -63,5 +90,30 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    
+    
+    //Class to make a background thread sending the email.
+    class SendEmailTask extends AsyncTask<Void, Void, Void>{
+    	Mail mail;
+    	public SendEmailTask(Mail mail) {
+			// TODO Auto-generated constructor stub
+    		this.mail = mail;
+		}
+    	
+		@Override
+		protected Void doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			
+			try {
+				mail.send();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			return null;
+		}
     }
 }
