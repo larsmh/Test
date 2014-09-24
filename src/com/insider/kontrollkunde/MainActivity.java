@@ -40,8 +40,8 @@ public class MainActivity extends ActionBarActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Mail mail = new Mail("franangthomas@gmail.com", "tranduil123");
-				String[] toArr = {"franang@stud.ntnu.com"}; 
+				Mail mail = new Mail("email", "password");
+				String[] toArr = {"badeanda87@hotmail.com"}; 
 	            mail.setTo(toArr); 
 	            mail.setFrom("franangthomas@gmail.com"); 
 	            mail.setSubject("Halla balla."); 
