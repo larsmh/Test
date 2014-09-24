@@ -41,11 +41,11 @@ public class MainActivity extends ActionBarActivity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				Mail mail = new Mail("email", "password");
-				String[] toArr = {"badeanda87@hotmail.com"}; 
+				String[] toArr = {"mottaker"}; 
 	            mail.setTo(toArr); 
-	            mail.setFrom("franangthomas@gmail.com"); 
+	            mail.setFrom("from_email"); 
 	            mail.setSubject("Halla balla."); 
-	            mail.setBody("Savner deg!!");
+	            mail.setBody("Ipsum sorem");
 	            
 	            new SendEmailTask(mail).execute();
 			}
