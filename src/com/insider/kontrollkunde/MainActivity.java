@@ -1,5 +1,6 @@
 package com.insider.kontrollkunde;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import com.insider.kontrollkunde.Model.Customer;
@@ -7,6 +8,9 @@ import com.insider.kontrollkunde.Model.CustomerList;
 import com.insider.kontrollkunde.Model.Globals;
 
 import android.support.v7.app.ActionBarActivity;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,40 +20,26 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.Toast;
 
 
 public class MainActivity extends ActionBarActivity {
 	private AutoCompleteTextView custSelect;
 	public Customer cust;
 	public String date;
+	public ArrayList<Mail> emailList;
+	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Globals.custList = new CustomerList();
         
+        
         custSelect = (AutoCompleteTextView) findViewById(R.id.custselect);
         ArrayAdapter<Customer> adapter = new ArrayAdapter<Customer>(this, android.R.layout.simple_list_item_1, Globals.custList.getList());
         custSelect.setAdapter(adapter);
         
-        
-        Button sendEmail = (Button) findViewById(R.id.regbutton);
-        
-        sendEmail.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Mail mail = new Mail("email", "password");
-				String[] toArr = {"mottaker"}; 
-	            mail.setTo(toArr); 
-	            mail.setFrom("from_email"); 
-	            mail.setSubject("Halla balla."); 
-	            mail.setBody("Ipsum sorem");
-	            
-	            new SendEmailTask(mail).execute();
-			}
-		});
     }
     public void register(View view){
     	Customer cust = getCustomer(custSelect.getText().toString());
@@ -61,6 +51,36 @@ public class MainActivity extends ActionBarActivity {
     	this.date = date;
     	
     	//sendMail(cust, date);
+    	// TODO Auto-generated method stub
+		Mail mail = new Mail("franangthomas@gmail.com", "tranduil123");
+		String[] toArr = {"badeanda87@hotmail.com"}; 
+        mail.setTo(toArr); 
+        mail.setFrom("from_email"); 
+        mail.setSubject("Halla balla."); 
+        mail.setBody("Ipsum sorem. Sender mail fra appen vår!");
+        
+        emailList.add(mail);
+        
+        ConnectivityManager connec = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+       
+        
+        if (connec != null && 
+            (connec.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED) || 
+            (connec.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED)){ 
+                //You are connected, do something online.
+        	Toast.makeText(getApplicationContext(), "Email sendt!", Toast.LENGTH_SHORT).show();
+        	
+        	for (int i = 0; i < emailList.size(); i++) {
+				
+            	new SendEmailTask(emailList.get(i)).execute();
+			}
+        	
+        } else if (connec.getNetworkInfo(0).getState() == NetworkInfo.State.DISCONNECTED ||
+                 connec.getNetworkInfo(1).getState() == NetworkInfo.State.DISCONNECTED ) {            
+                //Not connected.        
+                Toast.makeText(getApplicationContext(), "Ingen tilgang til internett.", Toast.LENGTH_LONG).show();
+        } 
+    	
     	//registrer jobb i database
     }
     
@@ -104,7 +124,7 @@ public class MainActivity extends ActionBarActivity {
 		@Override
 		protected Void doInBackground(Void... params) {
 			// TODO Auto-generated method stub
-			
+		
 			try {
 				mail.send();
 			} catch (Exception e) {
